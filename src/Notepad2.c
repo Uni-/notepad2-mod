@@ -2596,15 +2596,20 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
     case IDM_FILE_PRINT:
       {
         SHFILEINFO shfi;
-        WCHAR *pszTitle;
+        LPCWSTR pszTitle;
         WCHAR tchUntitled[32];
         WCHAR tchPageFmt[32];
 
-        if (lstrlen(szCurFile)) {
-          SHGetFileInfo2(szCurFile,0,&shfi,sizeof(SHFILEINFO),SHGFI_DISPLAYNAME);
-          pszTitle = shfi.szDisplayName;
-        }
-        else {
+        if (lstrlen(szTitleExcerpt)) {
+          pszTitle = szTitleExcerpt;
+        } else if (lstrlen(szCurFile)) {
+          if (iPathNameFormat == 2) {
+            pszTitle = szCurFile;
+          } else {
+            SHGetFileInfo2(szCurFile,0,&shfi,sizeof(SHFILEINFO),SHGFI_DISPLAYNAME);
+            pszTitle = shfi.szDisplayName;
+          }
+        } else {
           GetString(IDS_UNTITLED,tchUntitled,COUNTOF(tchUntitled));
           pszTitle = tchUntitled;
         }
